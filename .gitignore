@@ -41,6 +41,8 @@ results*.csv
 coco/
 coco128/
 VOC/
+salmon_dataset/
+1144images_dataset/
 
 # MATLAB GitIgnore -----------------------------------------------------------------------------------------------------
 *.m~
@@ -254,3 +256,6 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+data.yaml
+data/salmon.yaml
+salmon.yaml
