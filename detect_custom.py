@@ -34,6 +34,18 @@ import torch
 import torch.backends.cudnn as cudnn
 
 FILE = Path(__file__).resolve()
+
+yolo_root = r'C:\Users\Wouter\source\repos\AI\yolov5\yolov5'
+weights = yolo_root + '/runs/train/vtag4_Model_imp4/weights/best.pt'
+# 40168676
+# 40168667
+source = r'C:\Users\Wouter\Desktop\tests\bad_pics'
+target = r'C:\Users\Wouter\Desktop\tests\labelling_selection\vtag4_10-06'
+# source = test_source
+# target = test_target
+data = r'C:\Users\Wouter\source\repos\AI\yolov5\datasets\vtag4.yaml'
+dest = yolo_root + '/runs/detect'
+
 ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  # add ROOT to PATH
@@ -48,23 +60,23 @@ from utils.torch_utils import select_device, time_sync
 
 
 @torch.no_grad()
-def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
-        source=ROOT / 'data/images',  # file/dir/URL/glob, 0 for webcam
-        data=ROOT / 'data/coco128.yaml',  # dataset.yaml path
+def run(weights,  # model.pt path(s)
+        source,  # file/dir/URL/glob, 0 for webcam
+        data,  # dataset.yaml path
         imgsz=(640, 640),  # inference size (height, width)
         conf_thres=0.25,  # confidence threshold
-        iou_thres=0.45,  # NMS IOU threshold
+        iou_thres=0.85,  # NMS IOU threshold
         max_det=1000,  # maximum detections per image
-        device='',  # cuda device, i.e. 0 or 0,1,2,3 or cpu
-        save_txt=False,  # save results to *.txt
-        save_conf=False,  # save confidences in --save-txt labels
+        device='0',  # cuda device, i.e. 0 or 0,1,2,3 or cpu
+        save_txt=True,  # save results to *.txt
+        save_conf=True,  # save confidences in --save-txt labels
         save_crop=False,  # save cropped prediction boxes
         classes=None,  # filter by class: --class 0, or --class 0 2 3
         agnostic_nms=False,  # class-agnostic NMS
         augment=False,  # augmented inference
-        visualize=False,  # visualize features
+        visualize=True,  # visualize features
         update=False,  # update all models
-        project=ROOT / 'runs/detect',  # save results to project/name
+        project=dest,  # save results to project/name
         name='exp',  # save results to project/name
         exist_ok=False,  # existing project/name ok, do not increment
         line_thickness=3,  # bounding box thickness (pixels)
@@ -174,9 +186,9 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'yolov5s.pt', help='model path(s)')
-    parser.add_argument('--source', type=str, default=ROOT / 'data/images', help='file/dir/URL/glob, 0 for webcam')
-    parser.add_argument('--data', type=str, default=ROOT / 'data/coco128.yaml', help='(optional) dataset.yaml path')
+    parser.add_argument('--weights', nargs='+', type=str, default=weights, help='model path(s)')
+    parser.add_argument('--source', type=str, default=source, help='file/dir/URL/glob, 0 for webcam')
+    parser.add_argument('--data', type=str, default=data, help='(optional) dataset.yaml path')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
     parser.add_argument('--conf-thres', type=float, default=0.25, help='confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.45, help='NMS IoU threshold')
@@ -200,7 +212,7 @@ def parse_opt():
     parser.add_argument('--dnn', action='store_true', help='use OpenCV DNN for ONNX inference')
     opt = parser.parse_args()
     opt.imgsz *= 2 if len(opt.imgsz) == 1 else 1  # expand
-    print_args(FILE.stem, opt)
+    print_args(vars(opt))
     return opt
 
 

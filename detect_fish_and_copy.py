@@ -7,13 +7,23 @@ from pathlib import Path
 import torch
 import torch.backends.cudnn as cudnn
 
+test_source = 'C:\\Users\\Wouter\\Desktop\\tests\\labelling_data\\test'
+test_target = 'C:\\Users\\Wouter\\Desktop\\tests\\labelling_selection_test'
+
 FILE = Path(__file__).resolve()
-yolo_root = 'C:\\Users\\Wouter\\source\\repos\\yolov5\\yolov5'
-weights = yolo_root + '/runs/train/SalmonModel/weights/best.pt'
-source = 'C:\\Users\\Wouter\\Desktop\\tests\\labelling_data\\test'
-target = 'C:\\Users\\Wouter\\Desktop\\tests\\labelling_selection_test'
-data = yolo_root + '/data/coco128.yaml'
+yolo_root = r'C:\Users\Wouter\source\repos\AI\yolov5\yolov5'
+weights = yolo_root + '/runs/train/vtag4_Model_imp4/weights/best.pt'
+# 40168676
+# 40168667
+source = r'C:\Users\Wouter\Vision3f Dropbox\Captures\acquisition_run_2022-6-3__19-32-39-999403\camera_40168676\jun03'
+target = r'C:\Users\Wouter\Desktop\tests\labelling_selection\vtag4_03-06'
+# source = test_source
+# target = test_target
+data = r'C:\Users\Wouter\source\repos\AI\yolov5\datasets\vtag4.yaml'
 dest = yolo_root + '/runs/detect'
+side_buffer = 50
+confidence_threshold = 0.25
+IOU_threshold = 0.85
 
 from models.common import DetectMultiBackend
 from utils.datasets import LoadImages
@@ -29,10 +39,10 @@ def run(weights,  # model.pt path(s)
         data,  # dataset.yaml path
         dest,  # save results to project/name
         imgsz=(640, 640),  # inference size (height, width)
-        conf_thres=0.95,  # confidence threshold
-        iou_thres=0.45,  # NMS IOU threshold
+        conf_thres=confidence_threshold,  # confidence threshold
+        iou_thres=IOU_threshold,  # NMS IOU threshold
         max_det=1000,  # maximum detections per image
-        device='',  # cuda device, i.e. 0 or 0,1,2,3 or cpu
+        device='0',  # cuda device, i.e. 0 or 0,1,2,3 or cpu
         save_txt=False,  # save results to *.txt
         save_conf=True,  # save confidences in --save-txt labels
         save_crop=True,  # save cropped prediction boxes
@@ -96,29 +106,39 @@ def run(weights,  # model.pt path(s)
             seen += 1
             p, im0, frame = path, im0s.copy(), getattr(dataset, 'frame', 0)
             p = Path(p)  # to Path
+            gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             """txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # im.txt
             s += '%gx%g ' % im.shape[2:]  # print string
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
             imc = im0.copy() if save_crop else im0  # for save_crop
             annotator = Annotator(im0, line_width=line_thickness, example=str(names))"""
             if len(det):
-                shutil.copyfile(p, os.path.join(target, p.stem + ".jpg"))
-                """# Rescale boxes from img_size to im0 size
-                det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
-
-                # Print results
                 for c in det[:, -1].unique():
-                    n = (det[:, -1] == c).sum()  # detections per class
-                    l = f"{n} {names[int(c)]}{'s' * (n > 1)}"
-                    s += f"{l}, "  # add to string
-                    #LOGGER.info(l)
-
-                # Write results
-                for *xyxy, conf, cls in reversed(det):
-                    xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-
-                    line = f'(class: {cls}, xywh: {xywh}, conf: {conf})'
-                    LOGGER.info(line)"""
+                    n = (det[:, -1] == c).sum()
+                if n == 1:
+                    *xyxy, conf, cls = det[0]
+                    x,y,w,h = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()
+                    width_height_ratio_check = w > (1.3*h)
+                    horizontal_position_check = xyxy[0].tolist() > side_buffer and xyxy[2].tolist() < (640 - side_buffer)
+                    if width_height_ratio_check and horizontal_position_check:
+                        shutil.copyfile(p, os.path.join(target, p.stem + ".jpg"))
+                    #shutil.copyfile(p, os.path.join(target, p.stem + ".jpg"))
+                    """# Rescale boxes from img_size to im0 size
+                    det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()"""
+    
+                    # Print results
+                    for c in det[:, -1].unique():
+                        n = (det[:, -1] == c).sum()  # detections per class
+                        l = f"{n} {names[int(c)]}{'s' * (n > 1)}"
+                        s += f"{l}, "  # add to string
+                        #LOGGER.info(l)
+    
+                    """# Write results
+                    for *xyxy, conf, cls in reversed(det):
+                        xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+    
+                        line = f'(class: {cls}, xywh: {xywh}, conf: {conf})'
+                        LOGGER.info(line)"""
 
 
         # Print time (inference-only)
@@ -141,8 +161,8 @@ def parse_opt():
     parser.add_argument('--data', type=str, default=data, help='(optional) dataset.yaml path')
     parser.add_argument('--dest', type=str, default=dest, help='export dir')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
-    parser.add_argument('--conf-thres', type=float, default=0.9, help='confidence threshold')
-    parser.add_argument('--iou-thres', type=float, default=0.45, help='NMS IoU threshold')
+    parser.add_argument('--conf-thres', type=float, default=confidence_threshold, help='confidence threshold')
+    parser.add_argument('--iou-thres', type=float, default=IOU_threshold, help='NMS IoU threshold')
     parser.add_argument('--max-det', type=int, default=1000, help='maximum detections per image')
     parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     parser.add_argument('--save-txt', action='store_true', help='save results to *.txt')
@@ -162,7 +182,7 @@ def parse_opt():
     parser.add_argument('--dnn', action='store_true', help='use OpenCV DNN for ONNX inference')
     opt = parser.parse_args()
     opt.imgsz *= 2 if len(opt.imgsz) == 1 else 1  # expand
-    print_args(FILE.stem, opt)
+    print_args(vars(opt))
     return opt
 
 

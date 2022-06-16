@@ -259,3 +259,6 @@ fabric.properties
 data.yaml
 data/salmon.yaml
 salmon.yaml
+detect_custom.py
+detect_fish_and_copy.py
+detect_fish_and_crop.py
