@@ -11,22 +11,22 @@ test_source = 'C:\\Users\\Wouter\\Desktop\\tests\\labelling_data\\test'
 test_target = 'C:\\Users\\Wouter\\Desktop\\tests\\labelling_selection_test'
 
 FILE = Path(__file__).resolve()
-yolo_root = r'C:\Users\Wouter\source\repos\AI\yolov5\yolov5'
-weights = yolo_root + '/runs/train/vtag4_Model_imp4/weights/best.pt'
+yolo_root = r'C:\Users\VISION3F\Repos\AI'
+weights = yolo_root + r'\resources\weights/best.pt'
 # 40168676
 # 40168667
-source = r'C:\Users\Wouter\Vision3f Dropbox\Captures\acquisition_run_2022-6-3__19-32-39-999403\camera_40168676\jun03'
-target = r'C:\Users\Wouter\Desktop\tests\labelling_selection\vtag4_03-06'
+source = r'D:\Noorwegen VTAG5\acquisition_run_2022-8-8__12-58-33-192883\camera_40168676\aug08'
+target = r'D:\Tests\Netting_08-08_selection'
 # source = test_source
 # target = test_target
-data = r'C:\Users\Wouter\source\repos\AI\yolov5\datasets\vtag4.yaml'
-dest = yolo_root + '/runs/detect'
+data = r'C:\Users\VISION3F\Repos\AI\resources\datasets\vtag4.yaml'
+dest = yolo_root + r'\resources\runs\detect'
 side_buffer = 50
 confidence_threshold = 0.25
-IOU_threshold = 0.85
+IOU_threshold = 0.45
 
 from models.common import DetectMultiBackend
-from utils.datasets import LoadImages
+from utils.dataloaders import LoadImages
 from utils.general import (LOGGER, check_img_size, check_requirements, colorstr,
                            increment_path, non_max_suppression, print_args, scale_coords, strip_optimizer, xyxy2xywh)
 from utils.plots import Annotator, colors, save_one_box
