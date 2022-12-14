@@ -9,6 +9,9 @@ import torch.backends.cudnn as cudnn
 
 import local_variables
 
+test_source = 'C:\\Users\\Wouter\\Desktop\\tests\\labelling_data\\test'
+test_target = 'C:\\Users\\Wouter\\Desktop\\tests\\labelling_selection_test'
+
 FILE = Path(__file__).resolve()
 side_buffer = 50
 confidence_threshold = 0.25
