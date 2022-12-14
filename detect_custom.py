@@ -28,6 +28,7 @@ import argparse
 import os
 import sys
 from pathlib import Path
+import local_variables
 
 import cv2
 import torch
