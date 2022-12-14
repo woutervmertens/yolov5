@@ -7,20 +7,13 @@ from pathlib import Path
 import torch
 import torch.backends.cudnn as cudnn
 
+import local_variables
+
 test_source = 'C:\\Users\\Wouter\\Desktop\\tests\\labelling_data\\test'
 test_target = 'C:\\Users\\Wouter\\Desktop\\tests\\labelling_selection_test'
 
 FILE = Path(__file__).resolve()
-yolo_root = r'C:\Users\VISION3F\Repos\AI'
-weights = yolo_root + r'\resources\weights/best.pt'
-# 40168676
-# 40168667
-source = r'D:\Noorwegen VTAG5\acquisition_run_2022-8-8__12-58-33-192883\camera_40168676\aug08'
-target = r'D:\Tests\Netting_08-08_selection'
-# source = test_source
-# target = test_target
-data = r'C:\Users\VISION3F\Repos\AI\resources\datasets\vtag4.yaml'
-dest = yolo_root + r'\resources\runs\detect'
+
 side_buffer = 50
 confidence_threshold = 0.25
 IOU_threshold = 0.45
@@ -121,7 +114,7 @@ def run(weights,  # model.pt path(s)
                     width_height_ratio_check = w > (1.3*h)
                     horizontal_position_check = xyxy[0].tolist() > side_buffer and xyxy[2].tolist() < (640 - side_buffer)
                     if width_height_ratio_check and horizontal_position_check:
-                        shutil.copyfile(p, os.path.join(target, p.stem + ".jpg"))
+                        shutil.copyfile(p, os.path.join(local_variables.target, p.stem + ".jpg"))
                     #shutil.copyfile(p, os.path.join(target, p.stem + ".jpg"))
                     """# Rescale boxes from img_size to im0 size
                     det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()"""
@@ -156,10 +149,10 @@ def run(weights,  # model.pt path(s)
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', nargs='+', type=str, default=weights, help='model path(s)')
-    parser.add_argument('--source', type=str, default=source, help='file/dir/URL/glob')
-    parser.add_argument('--data', type=str, default=data, help='(optional) dataset.yaml path')
-    parser.add_argument('--dest', type=str, default=dest, help='export dir')
+    parser.add_argument('--weights', nargs='+', type=str, default=local_variables.weights, help='model path(s)')
+    parser.add_argument('--source', type=str, default=local_variables.source, help='file/dir/URL/glob')
+    parser.add_argument('--data', type=str, default=local_variables.data, help='(optional) dataset.yaml path')
+    parser.add_argument('--dest', type=str, default=local_variables.dest, help='export dir')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
     parser.add_argument('--conf-thres', type=float, default=confidence_threshold, help='confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=IOU_threshold, help='NMS IoU threshold')

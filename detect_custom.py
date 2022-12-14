@@ -33,18 +33,9 @@ import cv2
 import torch
 import torch.backends.cudnn as cudnn
 
-FILE = Path(__file__).resolve()
+import local_variables
 
-yolo_root = r'C:\Users\Wouter\source\repos\AI\yolov5\yolov5'
-weights = yolo_root + '/runs/train/vtag4_Model_imp4/weights/best.pt'
-# 40168676
-# 40168667
-source = r'C:\Users\Wouter\Desktop\tests\bad_pics'
-target = r'C:\Users\Wouter\Desktop\tests\labelling_selection\vtag4_10-06'
-# source = test_source
-# target = test_target
-data = r'C:\Users\Wouter\source\repos\AI\yolov5\datasets\vtag4.yaml'
-dest = yolo_root + '/runs/detect'
+FILE = Path(__file__).resolve()
 
 ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
@@ -76,7 +67,7 @@ def run(weights,  # model.pt path(s)
         augment=False,  # augmented inference
         visualize=True,  # visualize features
         update=False,  # update all models
-        project=dest,  # save results to project/name
+        project=local_variables.dest,  # save results to project/name
         name='exp',  # save results to project/name
         exist_ok=False,  # existing project/name ok, do not increment
         line_thickness=3,  # bounding box thickness (pixels)
@@ -186,9 +177,9 @@ def run(weights,  # model.pt path(s)
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', nargs='+', type=str, default=weights, help='model path(s)')
-    parser.add_argument('--source', type=str, default=source, help='file/dir/URL/glob, 0 for webcam')
-    parser.add_argument('--data', type=str, default=data, help='(optional) dataset.yaml path')
+    parser.add_argument('--weights', nargs='+', type=str, default=local_variables.weights, help='model path(s)')
+    parser.add_argument('--source', type=str, default=local_variables.source, help='file/dir/URL/glob, 0 for webcam')
+    parser.add_argument('--data', type=str, default=local_variables.data, help='(optional) dataset.yaml path')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
     parser.add_argument('--conf-thres', type=float, default=0.25, help='confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.45, help='NMS IoU threshold')
