@@ -2,16 +2,12 @@ import argparse
 import os
 import sys
 from pathlib import Path
+import local_variables
 
 import torch
 import torch.backends.cudnn as cudnn
 
 FILE = Path(__file__).resolve()
-yolo_root = 'C:\\Users\\Wouter\\source\\repos\\yolov5\\yolov5'
-weights = yolo_root + '/runs/train/SalmonModel/weights/best.pt'
-source = 'C:\\Users\\Wouter\\source\\repos\\yolov5\\datasets\\salmon_dataset\\test'
-data = yolo_root + '/data/coco128.yaml'
-dest = yolo_root + '/runs/detect'
 
 from models.common import DetectMultiBackend
 from utils.datasets import LoadImages
@@ -147,10 +143,10 @@ def run(weights,  # model.pt path(s)
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', nargs='+', type=str, default=weights, help='model path(s)')
-    parser.add_argument('--source', type=str, default=source, help='file/dir/URL/glob')
-    parser.add_argument('--data', type=str, default=data, help='(optional) dataset.yaml path')
-    parser.add_argument('--dest', type=str, default=dest, help='export dir')
+    parser.add_argument('--weights', nargs='+', type=str, default=local_variables.weights, help='model path(s)')
+    parser.add_argument('--source', type=str, default=local_variables.source, help='file/dir/URL/glob')
+    parser.add_argument('--data', type=str, default=local_variables.data, help='(optional) dataset.yaml path')
+    parser.add_argument('--dest', type=str, default=local_variables.dest, help='export dir')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
     parser.add_argument('--conf-thres', type=float, default=0.9, help='confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.45, help='NMS IoU threshold')
