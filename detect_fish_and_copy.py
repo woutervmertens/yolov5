@@ -12,10 +12,10 @@ import local_variables
 FILE = Path(__file__).resolve()
 side_buffer = 50
 confidence_threshold = 0.25
-IOU_threshold = 0.85
+IOU_threshold = 0.45
 
 from models.common import DetectMultiBackend
-from utils.datasets import LoadImages
+from utils.dataloaders import LoadImages
 from utils.general import (LOGGER, check_img_size, check_requirements, colorstr,
                            increment_path, non_max_suppression, print_args, scale_coords, strip_optimizer, xyxy2xywh)
 from utils.plots import Annotator, colors, save_one_box
