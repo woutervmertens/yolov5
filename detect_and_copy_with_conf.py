@@ -32,15 +32,25 @@ from pathlib import Path
 import torch
 import torch.backends.cudnn as cudnn
 
-import local_variables
-
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  # add ROOT to PATH
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
+test_source = 'C:\\Users\\Wouter\\Desktop\\tests\\labelling_data\\test'
+test_target = 'C:\\Users\\Wouter\\Desktop\\tests\\labelling_selection_test'
 
+yolo_root = r'C:\Users\VISION3F\Repos\AI'
+weights = yolo_root + r'\resources\weights/best.pt'
+# 40168676
+# 40168667
+source = r'D:\Tests\Netting_08-08_raw_sample_3'
+target = r'D:\Tests\Netting_08-08_raw_sample_3_active_learning'
+# source = test_source
+# target = test_target
+data = r'C:\Users\VISION3F\Repos\AI\resources\datasets\vtag4.yaml'
+dest = yolo_root + r'\resources\runs\detect'
 side_buffer = 50
 confidence_threshold = 0.25
 IOU_threshold = 0.45
@@ -55,9 +65,9 @@ from utils.torch_utils import select_device, time_sync
 
 @torch.no_grad()
 def run(
-        weights=local_variables.weights,  # model.pt path(s)
-        source=local_variables.source,  # file/dir/URL/glob, 0 for webcam
-        data=local_variables.data,  # dataset.yaml path
+        weights=weights,  # model.pt path(s)
+        source=source,  # file/dir/URL/glob, 0 for webcam
+        data=data,  # dataset.yaml path
         imgsz=(640, 640),  # inference size (height, width)
         conf_thres=confidence_threshold,  # confidence threshold
         iou_thres=IOU_threshold,  # NMS IOU threshold
@@ -217,9 +227,9 @@ def run(
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', nargs='+', type=str, default=local_variables.weights, help='model path(s)')
-    parser.add_argument('--source', type=str, default=local_variables.source, help='file/dir/URL/glob, 0 for webcam')
-    parser.add_argument('--data', type=str, default=local_variables.data, help='(optional) dataset.yaml path')
+    parser.add_argument('--weights', nargs='+', type=str, default=weights, help='model path(s)')
+    parser.add_argument('--source', type=str, default=source, help='file/dir/URL/glob, 0 for webcam')
+    parser.add_argument('--data', type=str, default=data, help='(optional) dataset.yaml path')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
     parser.add_argument('--conf-thres', type=float, default=confidence_threshold, help='confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=IOU_threshold, help='NMS IoU threshold')
